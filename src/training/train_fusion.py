@@ -3,6 +3,8 @@ from torch.utils.data import Dataset, DataLoader
 import torch.nn as nn
 from src.models.fusion_classifier import FusionClassifier
 from src.loaders.embedding_loader import EmbeddingDataset
+from pathlib import Path
+
 
 img_path = "embeddings/image_embeddings.pt"
 vid_path = "embeddings/video_embeddings.pt"
@@ -86,4 +88,8 @@ for epoch in range(EPOCHS):
     print(f"Epoch {epoch+1}/{EPOCHS} | Loss={total_loss:.4f} | Acc={acc:.4f}")
 
 
-torch.save(model.state_dict(), "artifacts/fusion_classifier/model.pth")
+save_path = Path("artifacts/fusion_classifier/model.pth")
+
+save_path.parent.mkdir(parents=True, exist_ok=True)
+
+torch.save(model.state_dict(), save_path)
