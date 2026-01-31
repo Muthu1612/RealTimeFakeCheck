@@ -1,7 +1,5 @@
-import Image from "next/image";
+import UploadCardWrapper from "@/components/web/UploadCardWrapper";
 
-export default function Home() {
-  return (
-    <main> Hello</main>
-  );
+export default function Page() {
+  return <UploadCardWrapper />;
 }

@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ../
+      dockerfile: build/Dockerfile.real_time_fake_check_backend
+    container_name: fastapi
+    ports:
+      - "8000:8000"
+    env_file:
+      - ../.env
+    restart: unless-stopped
+
+  tusd:
+    image: tusproject/tusd:latest
+    container_name: tusd
+    command:
+      - -s3-bucket=${AWS_S3_BUCKET}
+      - -host=0.0.0.0
+      - -port=8080
+      - -base-path=/files/
+    ports:
+      - "1080:8080"
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
+      - AWS_S3_BUCKET=${AWS_S3_BUCKET}
+      - AWS_REGION=${AWS_REGION}
+    env_file:
+      - ../.env
+    restart: unless-stopped
