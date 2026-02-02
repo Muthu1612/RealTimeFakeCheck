@@ -3,3 +3,4 @@ artifacts
 temp/
 embeddings
 .env
+data
