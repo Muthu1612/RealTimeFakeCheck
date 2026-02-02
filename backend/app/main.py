@@ -9,5 +9,3 @@ def health():
 @app.get("/")
 def main():
     return {"status": "ok"}
-
-
