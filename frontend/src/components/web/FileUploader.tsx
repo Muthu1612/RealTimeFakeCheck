@@ -25,6 +25,7 @@ export function UploadCard({
   const [progress, setProgress] = useState(0);
   const [fileName, setFileName] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const uploadRef = useRef<tus.Upload | null>(null);
 
@@ -68,7 +69,11 @@ export function UploadCard({
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (!acceptedFiles.length) return;
-    startUpload(acceptedFiles[0]);
+    // Just set the selected file, don't start upload yet
+    setSelectedFile(acceptedFiles[0]);
+    setFileName(acceptedFiles[0].name);
+    setStatus("idle");
+    setError(null);
   }, []);
 
   const onDropRejected = useCallback((fileRejections: FileRejection[]) => {
@@ -116,6 +121,23 @@ export function UploadCard({
     maxFiles: 1,
   });
 
+  const handleUploadClick = () => {
+    if (selectedFile) {
+      startUpload(selectedFile);
+    }
+  };
+
+  const handleCancel = () => {
+    setSelectedFile(null);
+    setFileName(null);
+    setStatus("idle");
+    setError(null);
+    setProgress(0);
+    if (uploadRef.current) {
+      uploadRef.current.abort();
+    }
+  };
+
   return (
     <div
       {...getRootProps()}
@@ -129,12 +151,39 @@ export function UploadCard({
     >
       <input {...getInputProps()} />
       <div className="flex flex-col items-center gap-4 text-center">
-        {status === "idle" && (
+        {status === "idle" && !selectedFile && (
           <>
             <div className="text-lg font-medium">Drop a video here</div>
             <p className="text-sm text-gray-500">
               Or click to browse (max {maxSizeGB}GB)
             </p>
+          </>
+        )}
+
+        {status === "idle" && selectedFile && (
+          <>
+            <div className="text-lg font-medium">File selected</div>
+            <p className="text-sm text-gray-700 font-medium">{fileName}</p>
+            <div className="flex gap-3 mt-2">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleUploadClick();
+                }}
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              >
+                Upload File
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCancel();
+                }}
+                className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+              >
+                Cancel
+              </button>
+            </div>
           </>
         )}
 
