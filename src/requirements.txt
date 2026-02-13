@@ -30,7 +30,7 @@ dill==0.3.8
 evaluate==0.4.6
 executing==2.2.1
 fastjsonschema==2.21.2
-ffmpeg==1.4
+
 filelock==3.19.1
 flatbuffers==25.9.23
 fonttools==4.60.1

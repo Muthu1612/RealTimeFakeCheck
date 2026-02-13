@@ -20,6 +20,7 @@ def _is_valid_face(face):
         and face.shape[1] > 10    # width
     )
 
+
 # -----------------------------
 # SAFE FACE EXTRACTOR
 # -----------------------------
@@ -145,6 +146,7 @@ class CelebDFVisualDataset(Dataset):
             frames.append(frames[-1].clone())
 
         return torch.stack(frames)
+
 
     def __getitem__(self, idx):
         video_path = self.video_paths[idx]
