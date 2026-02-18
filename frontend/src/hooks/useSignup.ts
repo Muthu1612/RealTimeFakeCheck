@@ -13,6 +13,7 @@ import type { SignupData, ValidationError, PasswordStrength } from '@/types/auth
 interface UseSignupReturn {
   // Form state
   formData: SignupData;
+  rememberMe: boolean;
   
   // UI state
   isLoading: boolean;
@@ -26,6 +27,7 @@ interface UseSignupReturn {
   // Actions
   handleInputChange: (field: keyof SignupData, value: string) => void;
   togglePasswordVisibility: (field: 'password' | 'confirmPassword') => void;
+  toggleRememberMe: () => void;
   handleSubmit: (e: React.FormEvent) => Promise<void>;
   clearError: (field: string) => void;
 }
@@ -45,6 +47,7 @@ export const useSignup = (): UseSignupReturn => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   // Memoized password strength calculation
   const passwordStrength = useMemo(
@@ -84,6 +87,13 @@ export const useSignup = (): UseSignupReturn => {
     } else {
       setShowConfirmPassword((prev) => !prev);
     }
+  }, []);
+
+  /**
+   * Toggle remember me
+   */
+  const toggleRememberMe = useCallback(() => {
+    setRememberMe((prev) => !prev);
   }, []);
 
   /**
@@ -157,6 +167,7 @@ export const useSignup = (): UseSignupReturn => {
 
   return {
     formData,
+    rememberMe,
     isLoading,
     errors,
     showPassword,
@@ -164,6 +175,7 @@ export const useSignup = (): UseSignupReturn => {
     passwordStrength,
     handleInputChange,
     togglePasswordVisibility,
+    toggleRememberMe,
     handleSubmit,
     clearError,
   };

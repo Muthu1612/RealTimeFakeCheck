@@ -6,20 +6,7 @@
 
 import { API_CONFIG, HTTP_STATUS } from '@/config/api.config';
 import type { SignupData, LoginData, AuthResponse, ApiError } from '@/types/auth.types';
-
-/**
- * Custom error class for API errors
- */
-export class AuthServiceError extends Error {
-  constructor(
-    message: string,
-    public statusCode?: number,
-    public field?: string
-  ) {
-    super(message);
-    this.name = 'AuthServiceError';
-  }
-}
+import { AuthServiceError } from '@/errors/auth.error';
 
 /**
  * HTTP client wrapper with error handling
@@ -213,3 +200,4 @@ class AuthService {
 
 // Export singleton instance
 export const authService = new AuthService();
+export { AuthServiceError };

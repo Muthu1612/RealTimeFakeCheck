@@ -16,6 +16,11 @@ export interface SignupData {
   confirmPassword: string;
 }
 
+export interface SignupInput {
+  email: string;
+  password: string;
+}
+
 export interface LoginData {
   email: string;
   password: string;
@@ -44,7 +49,16 @@ export interface ValidationResult {
 }
 
 export interface PasswordStrength {
-  score: 0 | 1 | 2 | 3 | 4; // 0: very weak, 4: very strong
+  score: 0 | 1 | 2 | 3 | 4;
   label: 'Very Weak' | 'Weak' | 'Fair' | 'Good' | 'Strong';
   feedback: string[];
+}
+
+export interface SignupResult {
+  userId: string;
+}
+
+export interface SignupError {
+  field?: "email" | "password";
+  message: string;
 }

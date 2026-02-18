@@ -24,6 +24,12 @@ export default function Navigation() {
             >
               Dashboard
             </Link>
+            <Link
+              href="/signup"
+              className="px-4 py-2 rounded-lg bg-gradient-to-r from-sapphire-600 to-sapphire-500 text-white font-medium hover:shadow-lg hover:shadow-sapphire-500/50 transition-all"
+            >
+              Sign Up
+            </Link>
           </div>
         </div>
       </div>

@@ -1,295 +1,111 @@
-"use client";
-
 /**
- * Sign Up Page Component
- * Following SOLID principles:
- * - Single Responsibility: Only handles presentation/UI
- * - Open/Closed: Can extend without modifying
- * - Dependency Inversion: Depends on useSignup hook abstraction
+ * Sign Up Page (Server Component)
+ * Following Next.js App Router best practices:
+ * - Server Component by default (no "use client")
+ * - Better performance - less JavaScript sent to client
+ * - Better SEO - fully rendered on server
+ * - Client components are isolated to interactive parts only
+ * 
+ * SOLID Principles:
+ * - Single Responsibility: Page handles layout and routing, components handle interactivity
+ * - Open/Closed: Easy to extend with metadata, analytics, etc.
+ * - Dependency Inversion: Depends on component abstractions
  */
 
-import Image from "next/image";
-import { useSignup } from "@/hooks/useSignup";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import { SignupForm } from "@/components/auth/SignupForm";
+import { SocialLoginButtons } from "@/components/auth/SocialLoginButtons";
+import type { Metadata } from "next";
 
-export default function SignUpPage() {
-    const {
-        formData,
-        isLoading,
-        errors,
-        showPassword,
-        showConfirmPassword,
-        passwordStrength,
-        handleInputChange,
-        togglePasswordVisibility,
-        handleSubmit,
-    } = useSignup();
+// Server-side metadata (SEO optimization)
+export const metadata: Metadata = {
+  title: "Sign Up | RealTimeFakeCheck",
+  description: "Create your account to start verifying content in real-time",
+};
 
-    // Password strength color mapping
-    const strengthColors = {
-        0: 'bg-red-500',
-        1: 'bg-orange-500',
-        2: 'bg-yellow-500',
-        3: 'bg-blue-500',
-        4: 'bg-green-500',
-    };
+/**
+ * Signup Page - Server Component
+ * Handles page layout, static content, and imports client components for interactivity
+ */
+export default function SignupPage() {
+  return (
+    <div className="flex min-h-screen flex-1 items-center justify-center px-4 py-12 bg-gray-50">
+      <div className="w-full max-w-md">
+        {/* Modal-like Container */}
+        <div className="bg-white rounded-2xl shadow-2xl p-8 relative">
+          {/* Close Button - Client component would go in a separate file if needed */}
+          <Link
+            href="/"
+            className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors"
+            aria-label="Close"
+          >
+            <XMarkIcon className="h-6 w-6" />
+          </Link>
 
-    const strengthTextColors = {
-        0: 'text-red-600',
-        1: 'text-orange-600',
-        2: 'text-yellow-600',
-        3: 'text-blue-600',
-        4: 'text-green-600',
-    };
+          {/* Header - Static Content (Server rendered) */}
+          <div className="text-center mb-6">
+            <h1 className="text-3xl font-bold text-gray-900">
+              Sign Up
+            </h1>
+            <p className="mt-2 text-sm text-gray-600">
+              Already have an account?{' '}
+              <Link 
+                href="/login" 
+                className="font-semibold text-blue-600 hover:text-blue-500 transition-colors"
+              >
+                Log In
+              </Link>
+            </p>
+          </div>
 
-    return (
-        <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-            <div className="sm:mx-auto sm:w-full sm:max-w-md bg-slate-100 rounded-lg p-8 shadow-lg">
-                {/* Header */}
-                <div>
-                    <Image
-                        width={100}
-                        height={100}
-                        alt="RealTimeFakeCheck"
-                        src="https://tailwindcss.com/_next/static/media/tailwindcss-mark.d52e9897.svg"
-                        className="mx-auto h-10 w-auto"
-                    />
-                    <h2 className="mt-5 text-center text-2xl font-bold tracking-tight text-gray-900">
-                        Create your account
-                    </h2>
-                    <p className="mt-2 text-center text-sm text-gray-600">
-                        Join us to start verifying content in real-time
-                    </p>
-                </div>
+          {/* Social Login Buttons - Client Component (interactive) */}
+          <SocialLoginButtons isLoading={false} />
 
-                <div className="mt-8">
-                    {/* General Error Message */}
-                    {errors.general && (
-                        <div 
-                            className="mb-4 p-3 rounded-md bg-red-50 border border-red-200"
-                            role="alert"
-                            aria-live="polite"
-                        >
-                            <p className="text-sm text-red-800">{errors.general}</p>
-                        </div>
-                    )}
-
-                    {/* Signup Form */}
-                    <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-                        {/* Email Field */}
-                        <div>
-                            <label 
-                                htmlFor="email" 
-                                className="block text-sm font-medium text-gray-900"
-                            >
-                                Email address
-                            </label>
-                            <div className="mt-2">
-                                <input
-                                    id="email"
-                                    name="email"
-                                    type="email"
-                                    autoComplete="email"
-                                    required
-                                    aria-required="true"
-                                    aria-invalid={!!errors.email}
-                                    aria-describedby={errors.email ? "email-error" : undefined}
-                                    disabled={isLoading}
-                                    className={`block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 ${
-                                        errors.email 
-                                            ? 'outline-red-500 focus:outline-red-600' 
-                                            : 'outline-gray-300 focus:outline-indigo-600'
-                                    } placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 disabled:opacity-50 disabled:cursor-not-allowed`}
-                                    placeholder="you@example.com"
-                                    value={formData.email}
-                                    onChange={(e) => handleInputChange('email', e.target.value)}
-                                />
-                                {errors.email && (
-                                    <p id="email-error" className="mt-1 text-sm text-red-600" role="alert">
-                                        {errors.email}
-                                    </p>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Password Field */}
-                        <div>
-                            <label 
-                                htmlFor="password" 
-                                className="block text-sm font-medium text-gray-900"
-                            >
-                                Password
-                            </label>
-                            <div className="mt-2 relative">
-                                <input
-                                    id="password"
-                                    name="password"
-                                    type={showPassword ? "text" : "password"}
-                                    autoComplete="new-password"
-                                    required
-                                    aria-required="true"
-                                    aria-invalid={!!errors.password}
-                                    aria-describedby={errors.password ? "password-error" : "password-strength"}
-                                    disabled={isLoading}
-                                    className={`block w-full rounded-md bg-white px-3 py-2 pr-10 text-base text-gray-900 outline-1 -outline-offset-1 ${
-                                        errors.password 
-                                            ? 'outline-red-500 focus:outline-red-600' 
-                                            : 'outline-gray-300 focus:outline-indigo-600'
-                                    } placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 disabled:opacity-50 disabled:cursor-not-allowed`}
-                                    placeholder="••••••••"
-                                    value={formData.password}
-                                    onChange={(e) => handleInputChange('password', e.target.value)}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => togglePasswordVisibility('password')}
-                                    className="absolute inset-y-0 right-0 flex items-center pr-3"
-                                    aria-label={showPassword ? "Hide password" : "Show password"}
-                                    disabled={isLoading}
-                                >
-                                    {showPassword ? (
-                                        <EyeSlashIcon className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                                    ) : (
-                                        <EyeIcon className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                                    )}
-                                </button>
-                            </div>
-                            
-                            {/* Password Strength Indicator */}
-                            {formData.password && (
-                                <div id="password-strength" className="mt-2">
-                                    <div className="flex gap-1 mb-1">
-                                        {[0, 1, 2, 3, 4].map((level) => (
-                                            <div
-                                                key={level}
-                                                className={`h-1 flex-1 rounded ${
-                                                    level <= passwordStrength.score
-                                                        ? strengthColors[passwordStrength.score]
-                                                        : 'bg-gray-200'
-                                                }`}
-                                            />
-                                        ))}
-                                    </div>
-                                    <p className={`text-xs ${strengthTextColors[passwordStrength.score]}`}>
-                                        {passwordStrength.label}
-                                    </p>
-                                    {passwordStrength.feedback.length > 0 && (
-                                        <ul className="mt-1 text-xs text-gray-600 list-disc list-inside">
-                                            {passwordStrength.feedback.map((feedback, idx) => (
-                                                <li key={idx}>{feedback}</li>
-                                            ))}
-                                        </ul>
-                                    )}
-                                </div>
-                            )}
-                            
-                            {errors.password && (
-                                <p id="password-error" className="mt-1 text-sm text-red-600" role="alert">
-                                    {errors.password}
-                                </p>
-                            )}
-                        </div>
-
-                        {/* Confirm Password Field */}
-                        <div>
-                            <label 
-                                htmlFor="confirmPassword" 
-                                className="block text-sm font-medium text-gray-900"
-                            >
-                                Confirm Password
-                            </label>
-                            <div className="mt-2 relative">
-                                <input
-                                    id="confirmPassword"
-                                    name="confirmPassword"
-                                    type={showConfirmPassword ? "text" : "password"}
-                                    autoComplete="new-password"
-                                    required
-                                    aria-required="true"
-                                    aria-invalid={!!errors.confirmPassword}
-                                    aria-describedby={errors.confirmPassword ? "confirm-password-error" : undefined}
-                                    disabled={isLoading}
-                                    className={`block w-full rounded-md bg-white px-3 py-2 pr-10 text-base text-gray-900 outline-1 -outline-offset-1 ${
-                                        errors.confirmPassword 
-                                            ? 'outline-red-500 focus:outline-red-600' 
-                                            : 'outline-gray-300 focus:outline-indigo-600'
-                                    } placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 disabled:opacity-50 disabled:cursor-not-allowed`}
-                                    placeholder="••••••••"
-                                    value={formData.confirmPassword}
-                                    onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => togglePasswordVisibility('confirmPassword')}
-                                    className="absolute inset-y-0 right-0 flex items-center pr-3"
-                                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
-                                    disabled={isLoading}
-                                >
-                                    {showConfirmPassword ? (
-                                        <EyeSlashIcon className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                                    ) : (
-                                        <EyeIcon className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                                    )}
-                                </button>
-                            </div>
-                            {errors.confirmPassword && (
-                                <p id="confirm-password-error" className="mt-1 text-sm text-red-600" role="alert">
-                                    {errors.confirmPassword}
-                                </p>
-                            )}
-                        </div>
-
-                        {/* Submit Button */}
-                        <div>
-                            <button
-                                type="submit"
-                                disabled={isLoading}
-                                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2.5 text-base font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                            >
-                                {isLoading ? (
-                                    <span className="flex items-center">
-                                        <svg 
-                                            className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" 
-                                            xmlns="http://www.w3.org/2000/svg" 
-                                            fill="none" 
-                                            viewBox="0 0 24 24"
-                                            aria-hidden="true"
-                                        >
-                                            <circle 
-                                                className="opacity-25" 
-                                                cx="12" 
-                                                cy="12" 
-                                                r="10" 
-                                                stroke="currentColor" 
-                                                strokeWidth="4"
-                                            />
-                                            <path 
-                                                className="opacity-75" 
-                                                fill="currentColor" 
-                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                            />
-                                        </svg>
-                                        Creating account...
-                                    </span>
-                                ) : (
-                                    'Sign up'
-                                )}
-                            </button>
-                        </div>
-                    </form>
-
-                    {/* Login Link */}
-                    <p className="mt-6 text-center text-sm text-gray-600">
-                        Already have an account?{' '}
-                        <a 
-                            href="/login" 
-                            className="font-semibold text-indigo-600 hover:text-indigo-500 transition-colors"
-                        >
-                            Log in
-                        </a>
-                    </p>
-                </div>
+          {/* Divider - Static Content (Server rendered) */}
+          <div className="relative mb-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
             </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-4 bg-white text-gray-500">or</span>
+            </div>
+          </div>
+
+          {/* Signup Form - Client Component (interactive) */}
+          <SignupForm />
+
+          {/* Privacy Policy Agreement - Static Content (Server rendered) */}
+          <p className="mt-6 text-center text-xs text-gray-600">
+            By creating this account, you agree to our{' '}
+            <Link 
+              href="/privacy-policy" 
+              className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
+            >
+              Privacy Policy
+            </Link>
+            {' '}&{' '}
+            <Link 
+              href="/cookie-policy" 
+              className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
+            >
+              Cookie Policy
+            </Link>
+            .
+          </p>
         </div>
-    );
+
+        {/* Additional Info - Static Content (Server rendered) */}
+        <p className="mt-6 text-center text-sm text-gray-600">
+          Need help?{' '}
+          <Link 
+            href="/support" 
+            className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
+          >
+            Contact Support
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
 }
