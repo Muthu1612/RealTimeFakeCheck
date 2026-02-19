@@ -5,4 +5,7 @@
  */
 
 export { SignupForm } from './SignupForm';
+export { LoginForm } from './LoginForm';
 export { SocialLoginButtons } from './SocialLoginButtons';
+export { SignInModal } from './SignInModal';
+export { SignUpModal } from './SignUpModal';

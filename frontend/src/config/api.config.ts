@@ -1,6 +1,5 @@
 /**
  * API Configuration
- * Centralized configuration following Single Responsibility Principle
  */
 
 export const API_CONFIG = {
