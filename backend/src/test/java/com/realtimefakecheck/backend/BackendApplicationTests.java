@@ -1,4 +1,4 @@
-package realtimefakecheck.com.backend;
+package com.realtimefakecheck.backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
